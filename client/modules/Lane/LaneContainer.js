@@ -7,35 +7,35 @@ import { DropTarget } from 'react-dnd';
 import ItemTypes from '../Kanban/itemTypes';
 
 const mapStateToProps = (state, ownProps) => {
-    return {
-      laneNotes: ownProps.lane.notes.map(noteId => state.notes[noteId])
-    };
+  return {
+    laneNotes: ownProps.lane.notes.map(noteId => state.notes[noteId])
+  };
 };
 
 const mapDispatchToProps = {
-    editLane,
-    deleteLane: deleteLaneRequest,
-    updateLane: updateLaneRequest,
-    addNote: createNoteRequest,
-    moveBetweenLanes,
+  editLane,
+  deleteLane: deleteLaneRequest,
+  updateLane: updateLaneRequest,
+  addNote: createNoteRequest,
+  moveBetweenLanes,
 };
 
 const noteTarget = {
-    hover(targetProps, monitor) {
-      const sourceProps = monitor.getItem();
-      const { id: noteId, laneId: sourceLaneId } = sourceProps;
+  drop(targetProps, monitor) {
+    const sourceProps = monitor.getItem();
+    const { id: noteId, laneId: sourceLaneId } = sourceProps;
 
-      if (!targetProps.lane.notes.length) {targetProps.moveBetweenLanes(
-        targetProps.lane.id,
-        noteId,
-        sourceLaneId,
-      )};
-    },
+    targetProps.moveBetweenLanes(
+      targetProps.lane.id,
+      noteId,
+      sourceLaneId,
+    );
+  },
 };
 
 export default compose(
-    connect(mapStateToProps, mapDispatchToProps),
-    DropTarget(ItemTypes.NOTE, noteTarget, (dragConnect) => ({
-      connectDropTarget: dragConnect.dropTarget()
-    }))
-  )(Lane);
+  connect(mapStateToProps, mapDispatchToProps),
+  DropTarget(ItemTypes.NOTE, noteTarget, (dragConnect) => ({
+    connectDropTarget: dragConnect.dropTarget()
+  }))
+)(Lane);
